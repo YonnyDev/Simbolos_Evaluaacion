@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Actividades Lúdicas - SENA</title>
+    <style>
+      :root {
+        --sena-green: #39a900;
+        --sena-green-dark: #2c8500;
+        --sena-orange: #ff8300;
+        --bg-light: #f4f7f6;
+        --text-dark: #333333;
+        --white: #ffffff;
+        --star-off: #dcdcdc;
+        --star-on: #ffb400;
+        --red: #d32f2f;
+      }
+      * { box-sizing: border-box; }
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        background-color: var(--sena-green);
+        color: var(--white);
+        text-align: center;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      header img {
+        height: 90px;
+        background-color: var(--white);
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.8rem;
+      }
+      header p {
+        margin: 6px 0 0;
+        opacity: 0.95;
+        font-size: 0.95rem;
+      }
+      .container {
+        max-width: 800px;
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+      .module {
+        background: var(--white);
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        padding: 25px;
+        border-top: 6px solid var(--sena-green);
+      }
+      h2 {
+        color: var(--sena-green);
+        margin-top: 0;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+      button {
+        background-color: var(--sena-green);
+        color: var(--white);
+        border: none;
+        padding: 10px 18px;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.2s, transform 0.1s;
+      }
+      button:hover { background-color: var(--sena-green-dark); }
+      button:active { transform: scale(0.97); }
+      button.secondary {
+        background-color: #888;
+      }
+      button.secondary:hover { background-color: #666; }
+
+      /* Selector de grupo */
+      .group-select-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .group-select-wrap label {
+        font-weight: bold;
+        font-size: 1.05rem;
+      }
+      .group-buttons {
+        display: flex;
+        gap: 8px;
+      }
+      .group-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 2px solid var(--sena-green);
+        background: var(--white);
+        color: var(--sena-green);
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 0;
+      }
+      .group-btn:hover { background: #eafbe0; }
+      .group-btn.active {
+        background: var(--sena-green);
+        color: var(--white);
+        transform: scale(1.1);
+      }
+      .group-btn.evaluated::after {
+        content: "✓";
+        display: block;
+        font-size: 0.65rem;
+        margin-top: -4px;
+      }
+
+      /* Rúbrica lúdica */
+      .rubric {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+      .rubric h3 {
+        margin-top: 0;
+        color: var(--text-dark);
+        text-align: center;
+      }
+      .rubric-sub {
+        text-align: center;
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: -8px;
+        margin-bottom: 18px;
+      }
+      .criteria {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        gap: 10px;
+        flex-wrap: wrap;
+        padding-bottom: 12px;
+        border-bottom: 1px dashed #ddd;
+      }
+      .criteria:last-of-type { border-bottom: none; }
+      .criteria label {
+        flex: 1;
+        min-width: 200px;
+        font-size: 1rem;
+      }
+      .stars {
+        display: flex;
+        gap: 4px;
+        font-size: 1.8rem;
+        cursor: pointer;
+        user-select: none;
+      }
+      .stars .star {
+        color: var(--star-off);
+        transition: transform 0.15s, color 0.15s;
+      }
+      .stars .star.filled {
+        color: var(--star-on);
+      }
+      .stars .star:hover {
+        transform: scale(1.2);
+      }
+
+      .rubric-controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+        margin-bottom: 20px;
+      }
+
+      .result {
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-top: 5px;
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        display: none;
+        animation: pop 0.3s ease;
+      }
+      @keyframes pop {
+        0% { transform: scale(0.9); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+      .aprueba {
+        color: var(--white);
+        background-color: var(--sena-green);
+      }
+      .no-aprueba {
+        color: var(--white);
+        background-color: var(--red);
+      }
+
+      /* Tabla resumen de los 5 grupos */
+      .summary {
+        margin-top: 10px;
+      }
+      .summary h3 {
+        color: var(--text-dark);
+        border-bottom: 2px solid #eee;
+        padding-bottom: 8px;
+      }
+      table.summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+      }
+      table.summary-table th,
+      table.summary-table td {
+        text-align: center;
+        padding: 10px 6px;
+        border-bottom: 1px solid #eee;
+      }
+      table.summary-table th {
+        background-color: var(--sena-green);
+        color: var(--white);
+      }
+      table.summary-table td.status-aprueba {
+        color: var(--sena-green-dark);
+        font-weight: bold;
+      }
+      table.summary-table td.status-no {
+        color: var(--red);
+        font-weight: bold;
+      }
+      table.summary-table tr.empty-row td {
+        color: #aaa;
+        font-style: italic;
+      }
+      .badge-min {
+        display: inline-block;
+        background: var(--sena-orange);
+        color: var(--white);
+        font-size: 0.8rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <!-- URL oficial del logo del SENA en Wikimedia -->
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/8/83/Sena_Colombia_logo.svg"
+        alt="Logo SENA"
+      />
+      <h1>Servicio Nacional de Aprendizaje - SENA</h1>
+      <p>Actividades Lúdicas de Evaluación por Grupos</p>
+    </header>
+
+    <div class="container">
+      <!-- ================= MÓDULO 1 ================= -->
+      <div class="module" data-module="1">
+        <h2>Módulo 1: SENA Resuelve (Misión)</h2>
+
+        <div class="group-select-wrap">
+          <label>Grupo a evaluar:</label>
+          <div class="group-buttons"></div>
+        </div>
+
+        <div class="rubric">
+          <h3>⭐ Rúbrica de Evaluación <span class="badge-min">Mínimo 20/25 para aprobar</span></h3>
+          <p class="rubric-sub">Califica cada criterio de 1 a 5 estrellas (5 criterios en total)</p>
+
+          <div class="criteria" data-crit="1">
+            <label>1. Claridad del mensaje</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="2">
+            <label>2. Trabajo en equipo</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="3">
+            <label>3. Creatividad y uso de recursos</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="4">
+            <label>4. Participación de todos los integrantes</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="5">
+            <label>5. Cumplimiento del objetivo de la actividad</label>
+            <div class="stars"></div>
+          </div>
+
+          <div class="rubric-controls">
+            <button class="btn-calc">Calcular y Registrar</button>
+            <button class="btn-reset-eval secondary">Limpiar estrellas</button>
+          </div>
+          <div class="result"></div>
+        </div>
+
+        <div class="summary">
+          <h3>📋 Resumen de los 5 grupos</h3>
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Grupo</th>
+                <th>Puntaje</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody class="summary-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= MÓDULO 2 ================= -->
+      <div class="module" data-module="2">
+        <h2>Módulo 2: Noticiero del Futuro (Visión)</h2>
+
+        <div class="group-select-wrap">
+          <label>Grupo a evaluar:</label>
+          <div class="group-buttons"></div>
+        </div>
+
+        <div class="rubric">
+          <h3>⭐ Rúbrica de Evaluación <span class="badge-min">Mínimo 20/25 para aprobar</span></h3>
+          <p class="rubric-sub">Califica cada criterio de 1 a 5 estrellas (5 criterios en total)</p>
+
+          <div class="criteria" data-crit="1">
+            <label>1. Claridad del mensaje</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="2">
+            <label>2. Trabajo en equipo</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="3">
+            <label>3. Creatividad y uso de recursos</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="4">
+            <label>4. Participación de todos los integrantes</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="5">
+            <label>5. Cumplimiento del objetivo de la actividad</label>
+            <div class="stars"></div>
+          </div>
+
+          <div class="rubric-controls">
+            <button class="btn-calc">Calcular y Registrar</button>
+            <button class="btn-reset-eval secondary">Limpiar estrellas</button>
+          </div>
+          <div class="result"></div>
+        </div>
+
+        <div class="summary">
+          <h3>📋 Resumen de los 5 grupos</h3>
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Grupo</th>
+                <th>Puntaje</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody class="summary-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ================= MÓDULO 3 ================= -->
+      <div class="module" data-module="3">
+        <h2>Módulo 3: Símbolos Vivos (Símbolos)</h2>
+
+        <div class="group-select-wrap">
+          <label>Grupo a evaluar:</label>
+          <div class="group-buttons"></div>
+        </div>
+
+        <div class="rubric">
+          <h3>⭐ Rúbrica de Evaluación <span class="badge-min">Mínimo 20/25 para aprobar</span></h3>
+          <p class="rubric-sub">Califica cada criterio de 1 a 5 estrellas (5 criterios en total)</p>
+
+          <div class="criteria" data-crit="1">
+            <label>1. Claridad del mensaje</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="2">
+            <label>2. Trabajo en equipo</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="3">
+            <label>3. Creatividad y uso de recursos</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="4">
+            <label>4. Participación de todos los integrantes</label>
+            <div class="stars"></div>
+          </div>
+          <div class="criteria" data-crit="5">
+            <label>5. Cumplimiento del objetivo de la actividad</label>
+            <div class="stars"></div>
+          </div>
+
+          <div class="rubric-controls">
+            <button class="btn-calc">Calcular y Registrar</button>
+            <button class="btn-reset-eval secondary">Limpiar estrellas</button>
+          </div>
+          <div class="result"></div>
+        </div>
+
+        <div class="summary">
+          <h3>📋 Resumen de los 5 grupos</h3>
+          <table class="summary-table">
+            <thead>
+              <tr>
+                <th>Grupo</th>
+                <th>Puntaje</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody class="summary-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const NUM_GROUPS = 5;
+      const NUM_CRITERIA = 5;
+      const MIN_APRUEBA = 20;
+      const MAX_TOTAL = NUM_CRITERIA * 5; // 25
+
+      document.querySelectorAll(".module").forEach((module) => {
+        // Estado en memoria: calificaciones actuales por criterio, grupo activo,
+        // y resultados ya registrados por grupo (1 al 5)
+        let currentGroup = 1;
+        let ratings = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        const groupResults = {}; // { groupNumber: { total, aprueba } }
+
+        const groupButtonsWrap = module.querySelector(".group-buttons");
+        const resultDiv = module.querySelector(".result");
+        const summaryBody = module.querySelector(".summary-body");
+        const starContainers = module.querySelectorAll(".stars");
+
+        // --- Construir botones de grupo (1 al 5) ---
+        for (let g = 1; g <= NUM_GROUPS; g++) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "group-btn" + (g === 1 ? " active" : "");
+          btn.textContent = g;
+          btn.dataset.group = g;
+          btn.addEventListener("click", () => selectGroup(g));
+          groupButtonsWrap.appendChild(btn);
+        }
+
+        // --- Construir estrellas para cada criterio ---
+        starContainers.forEach((container) => {
+          const critWrap = container.closest(".criteria");
+          const critId = critWrap.dataset.crit;
+          for (let i = 1; i <= 5; i++) {
+            const star = document.createElement("span");
+            star.className = "star";
+            star.textContent = "★";
+            star.dataset.value = i;
+            star.addEventListener("click", () => {
+              ratings[critId] = i;
+              paintStars(container, i);
+            });
+            container.appendChild(star);
+          }
+        });
+
+        function paintStars(container, value) {
+          container.querySelectorAll(".star").forEach((star) => {
+            star.classList.toggle("filled", parseInt(star.dataset.value) <= value);
+          });
+        }
+
+        function clearStars() {
+          ratings = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+          starContainers.forEach((c) => paintStars(c, 0));
+          resultDiv.style.display = "none";
+        }
+
+        function selectGroup(g) {
+          currentGroup = g;
+          groupButtonsWrap.querySelectorAll(".group-btn").forEach((btn) => {
+            btn.classList.toggle("active", parseInt(btn.dataset.group) === g);
+          });
+          // Si el grupo ya fue evaluado, mostrar su calificación guardada
+          if (groupResults[g]) {
+            const saved = groupResults[g];
+            ratings = { ...saved.ratings };
+            starContainers.forEach((container) => {
+              const critId = container.closest(".criteria").dataset.crit;
+              paintStars(container, ratings[critId]);
+            });
+            showResult(saved.total, saved.aprueba);
+          } else {
+            clearStars();
+          }
+        }
+
+        function showResult(total, aprueba) {
+          resultDiv.style.display = "block";
+          resultDiv.className = "result " + (aprueba ? "aprueba" : "no-aprueba");
+          resultDiv.innerHTML = aprueba
+            ? `🎉 Puntaje: ${total} / ${MAX_TOTAL} <br> ¡GRUPO ${currentGroup} APRUEBA!`
+            : `😕 Puntaje: ${total} / ${MAX_TOTAL} <br> GRUPO ${currentGroup} NO APRUEBA`;
+        }
+
+        function renderSummary() {
+          summaryBody.innerHTML = "";
+          for (let g = 1; g <= NUM_GROUPS; g++) {
+            const row = document.createElement("tr");
+            if (groupResults[g]) {
+              const r = groupResults[g];
+              row.innerHTML = `
+                <td>Grupo ${g}</td>
+                <td>${r.total} / ${MAX_TOTAL}</td>
+                <td class="${r.aprueba ? "status-aprueba" : "status-no"}">${
+                r.aprueba ? "✅ Aprueba" : "❌ No aprueba"
+              }</td>`;
+            } else {
+              row.className = "empty-row";
+              row.innerHTML = `<td>Grupo ${g}</td><td>—</td><td>Sin evaluar</td>`;
+            }
+            summaryBody.appendChild(row);
+          }
+        }
+
+        // --- Botón calcular y registrar ---
+        module.querySelector(".btn-calc").addEventListener("click", () => {
+          const values = Object.values(ratings);
+          if (values.some((v) => v === 0)) {
+            alert("Por favor califica los 5 criterios antes de calcular (usa las estrellas).");
+            return;
+          }
+          const total = values.reduce((a, b) => a + b, 0);
+          const aprueba = total >= MIN_APRUEBA;
+          groupResults[currentGroup] = { total, aprueba, ratings: { ...ratings } };
+          showResult(total, aprueba);
+          renderSummary();
+
+          // Marcar el botón del grupo como evaluado
+          const btn = groupButtonsWrap.querySelector(
+            `.group-btn[data-group="${currentGroup}"]`
+          );
+          btn.classList.add("evaluated");
+        });
+
+        // --- Botón limpiar estrellas (para volver a calificar el grupo actual) ---
+        module.querySelector(".btn-reset-eval").addEventListener("click", () => {
+          clearStars();
+          delete groupResults[currentGroup];
+          renderSummary();
+          const btn = groupButtonsWrap.querySelector(
+            `.group-btn[data-group="${currentGroup}"]`
+          );
+          btn.classList.remove("evaluated");
+        });
+
+        // Inicializar tabla vacía
+        renderSummary();
+      });
+    </script>
+  </body>
+</html>
